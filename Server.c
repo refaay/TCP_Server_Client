@@ -23,7 +23,7 @@ int main() {
   memset((char *)&serverAddr, 0, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(7000);
+  serverAddr.sin_port = htons(8000);
 
   if (bind(Sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
     perror("bind failed");
@@ -77,7 +77,7 @@ int main() {
     // os.write((const char *)buffer, length);
     // os.close();
     printf("Data to be sent: %s\n", buffer);
-    if (send(new_socket, buffer, sizeof(buffer), 0) < 0) {
+    if (send(new_socket, buffer, strlen(buffer), 0) < 0) {
       perror("Send failed");
       return 0;
     }
