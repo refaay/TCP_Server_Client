@@ -6,6 +6,19 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <string>
+#include <arpa/inet.h>
+#include <netdb.h>
+static void makeDestSA(struct sockaddr_in *sa, char *hostname, int port) {
+    struct hostent *host;
+    sa->sin_family = AF_INET;
+    if ((host = gethostbyname(hostname)) == NULL) {
+      // printf("Unknown host name\n");
+      exit(-1);
+    }
+    sa->sin_addr = *(struct in_addr *)(host->h_addr);
+    sa->sin_port = htons(port);
+  }
 
 int main() {
   int Sockfd;
@@ -16,11 +29,20 @@ int main() {
 
   struct sockaddr_in serverAddr;
 
-  memset((char *)&serverAddr, 0, sizeof(serverAddr));
-  serverAddr.sin_family = AF_INET;
-  serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(7000);
 
+	std::string dos_ip_string = "10.7.57.141";
+	char *dos_ip;
+  dos_ip = new char[dos_ip_string.size() + 1];
+  dos_ip_string.copy(dos_ip, dos_ip_string.size() + 1);
+  dos_ip[dos_ip_string.size()] = '\0';
+  memset((char *)&serverAddr, 0, sizeof(serverAddr));
+	makeDestSA(&(serverAddr), dos_ip, 8000); // make dos socket
+
+  /*
+  serverAddr.sin_family = AF_INET;
+  serverAddr.sin_addr.s_addr = htonl();
+  serverAddr.sin_port = htons(7000);
+*/
   if (connect(Sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
     perror("Connect failed");
     return 0;
